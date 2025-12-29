@@ -2,7 +2,6 @@ import { sendData } from './api.js';
 import { showSuccessMessage, showErrorMessage } from './message.js';
 import { isEscapeKey } from './util.js';
 
-// --- КОНСТАНТЫ ---
 const SCALE_STEP = 25;
 const SCALE_MIN = 25;
 const SCALE_MAX = 100;
@@ -25,7 +24,6 @@ const EFFECT_CONFIG = {
   heat: { range: { min: 1, max: 3 }, step: 0.1, start: 3, apply: (v) => `brightness(${v.toFixed(1)})`, visible: true }
 };
 
-// --- DOM ЭЛЕМЕНТЫ ---
 const form = document.querySelector('#upload-select-image');
 const uploadFileInput = document.querySelector('#upload-file');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
@@ -36,24 +34,20 @@ const hashtagsInput = form.querySelector('.text__hashtags');
 const descriptionInput = form.querySelector('.text__description');
 const submitButton = form.querySelector('#upload-submit');
 
-// Масштаб
 const scaleSmallerBtn = form.querySelector('.scale__control--smaller');
 const scaleBiggerBtn = form.querySelector('.scale__control--bigger');
 const scaleValueInput = form.querySelector('.scale__control--value');
 const previewImage = form.querySelector('.img-upload__preview img');
 const defaultPreviewSrc = previewImage.src;
 
-// Эффекты
 const effectLevelField = form.querySelector('.img-upload__effect-level');
 const effectLevelValue = form.querySelector('.effect-level__value');
 const effectSliderNode = form.querySelector('.effect-level__slider');
 
-// --- ПЕРЕМЕННЫЕ СОСТОЯНИЯ ---
 let pristine = null;
 let currentEffect = 'none';
 let sliderCreated = false;
 
-// --- ВАЛИДАЦИЯ ---
 const validateHashtags = (value) => {
   if (!value.trim()) {
     return true;
@@ -97,7 +91,6 @@ const initPristine = () => {
   }
 };
 
-// --- МАСШТАБ ---
 const applyScale = (percent) => {
   const clamped = Math.min(SCALE_MAX, Math.max(SCALE_MIN, percent));
   previewImage.style.transform = `scale(${clamped / 100})`;
@@ -116,38 +109,61 @@ const onScaleBiggerClick = (e) => {
   applyScale(cur + SCALE_STEP);
 };
 
-// --- ЭФФЕКТЫ ---
 const setEffect = (name) => {
   currentEffect = name;
   const effectConfig = EFFECT_CONFIG[name];
 
+  previewImage.style.filter = '';
+
   if (effectConfig.visible) {
     effectLevelField.classList.remove('hidden');
+
     if (!sliderCreated) {
-      window.noUiSlider.create(effectSliderNode, {
-        start: effectConfig.start, connect: 'lower', range: effectConfig.range, step: effectConfig.step
-      });
-      sliderCreated = true;
-      effectSliderNode.noUiSlider.on('update', (values, handle) => {
-        const v = parseFloat(values[handle]);
-        effectLevelValue.value = v;
-        if (currentEffect !== 'none') {
-          previewImage.style.filter = EFFECT_CONFIG[currentEffect].apply(v);
-        }
-      });
-    } else {
-      effectSliderNode.noUiSlider.updateOptions({ range: effectConfig.range, step: effectConfig.step, start: effectConfig.start });
-      effectSliderNode.noUiSlider.set(effectConfig.start);
+      if (typeof window.noUiSlider !== 'undefined') {
+        window.noUiSlider.create(effectSliderNode, {
+          start: effectConfig.start,
+          connect: 'lower',
+          range: effectConfig.range,
+          step: effectConfig.step
+        });
+
+        sliderCreated = true;
+
+        effectSliderNode.noUiSlider.on('update', (values, handle) => {
+          const v = parseFloat(values[handle]);
+          effectLevelValue.value = v;
+          if (currentEffect !== 'none') {
+            previewImage.style.filter = EFFECT_CONFIG[currentEffect].apply(v);
+          }
+        });
+      } else {
+        console.error('noUiSlider не найден!');
+        return;
+      }
     }
+
+    if (sliderCreated) {
+      effectSliderNode.noUiSlider.updateOptions({
+        range: effectConfig.range,
+        step: effectConfig.step,
+        start: effectConfig.start
+      });
+    }
+
     previewImage.style.filter = effectConfig.apply(effectConfig.start);
+
   } else {
     effectLevelField.classList.add('hidden');
     previewImage.style.filter = '';
     effectLevelValue.value = '';
+
+    if (sliderCreated) {
+      effectSliderNode.noUiSlider.destroy();
+      sliderCreated = false;
+    }
   }
 };
 
-// --- УПРАВЛЕНИЕ ФОРМОЙ ---
 const isErrorMessageOpen = () => Boolean(document.querySelector('.error'));
 
 const onDocumentKeydown = (evt) => {
@@ -179,7 +195,6 @@ function showEditForm() {
   setEffect('none');
 }
 
-// --- ОТПРАВКА (POST) ---
 const blockSubmitButton = () => {
   submitButton.disabled = true;
   submitButton.textContent = SubmitButtonText.SENDING;
@@ -210,7 +225,6 @@ form.addEventListener('submit', (evt) => {
   }
 });
 
-// --- ИНИЦИАЛИЗАЦИЯ ---
 initPristine();
 
 uploadFileInput.addEventListener('change', (evt) => {
