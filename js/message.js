@@ -4,6 +4,8 @@ const ALERT_SHOW_TIME = 5000;
 
 const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
 const errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
+const dataErrorMessageTemplate = document.querySelector('#data-error')?.content.querySelector('.data-error');
+
 const body = document.querySelector('body');
 
 function onMessageEscKeydown(evt) {
@@ -52,6 +54,18 @@ function showMessage(template, closeButtonClass) {
 const showSuccessMessage = () => showMessage(successMessageTemplate, '.success__button');
 const showErrorMessage = () => showMessage(errorMessageTemplate, '.error__button');
 
+const showDataErrorMessage = () => {
+  if (!dataErrorMessageTemplate) {
+    return;
+  }
+  const dataErrorElement = dataErrorMessageTemplate.cloneNode(true);
+  document.body.append(dataErrorElement);
+
+  setTimeout(() => {
+    dataErrorElement.remove();
+  }, ALERT_SHOW_TIME);
+};
+
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
   alertContainer.style.zIndex = '100';
@@ -74,4 +88,4 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export { showSuccessMessage, showErrorMessage, showAlert };
+export { showSuccessMessage, showErrorMessage, showAlert, showDataErrorMessage };
