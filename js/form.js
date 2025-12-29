@@ -41,12 +41,12 @@ const previewImage = form.querySelector('.img-upload__preview img');
 const defaultPreviewSrc = previewImage.src;
 
 const effectLevelField = form.querySelector('.img-upload__effect-level');
-const effectLevelValue = document.querySelector('.effect-level__value');
-const effectSliderNode = document.querySelector('.effect-level__slider');
+const effectLevelValue = form.querySelector('.effect-level__value');
+const effectSliderNode = form.querySelector('.effect-level__slider');
 
 let pristine = null;
 let currentEffect = 'none';
-let sliderInstance = null;
+let sliderCreated = false;
 
 const validateHashtags = (value) => {
   if (!value.trim()) {
@@ -109,49 +109,33 @@ const onScaleBiggerClick = (e) => {
   applyScale(cur + SCALE_STEP);
 };
 
-const destroySlider = () => {
-  if (sliderInstance) {
-    sliderInstance.destroy();
-    sliderInstance = null;
-  }
-};
-
 const setEffect = (name) => {
   currentEffect = name;
   const effectConfig = EFFECT_CONFIG[name];
 
-  if (!effectConfig) {
-    return;
-  }
-
   if (effectConfig.visible) {
     effectLevelField.classList.remove('hidden');
-
-    if (typeof window.noUiSlider !== 'undefined') {
-      destroySlider();
-
-      sliderInstance = window.noUiSlider.create(effectSliderNode, {
-        start: effectConfig.start,
-        connect: 'lower',
-        range: effectConfig.range,
-        step: effectConfig.step
+    if (!sliderCreated) {
+      window.noUiSlider.create(effectSliderNode, {
+        start: effectConfig.start, connect: 'lower', range: effectConfig.range, step: effectConfig.step
       });
-
-      sliderInstance.on('update', (values, handle) => {
+      sliderCreated = true;
+      effectSliderNode.noUiSlider.on('update', (values, handle) => {
         const v = parseFloat(values[handle]);
         effectLevelValue.value = v;
-        if (currentEffect !== 'none' && EFFECT_CONFIG[currentEffect]) {
+        if (currentEffect !== 'none') {
           previewImage.style.filter = EFFECT_CONFIG[currentEffect].apply(v);
         }
       });
-
-      previewImage.style.filter = effectConfig.apply(effectConfig.start);
+    } else {
+      effectSliderNode.noUiSlider.updateOptions({ range: effectConfig.range, step: effectConfig.step, start: effectConfig.start });
+      effectSliderNode.noUiSlider.set(effectConfig.start);
     }
+    previewImage.style.filter = effectConfig.apply(effectConfig.start);
   } else {
     effectLevelField.classList.add('hidden');
     previewImage.style.filter = '';
     effectLevelValue.value = '';
-    destroySlider();
   }
 };
 
