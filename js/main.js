@@ -1,6 +1,6 @@
 import { renderThumbnails } from './thumbnail.js';
 import { getData } from './api.js';
-import { showDataErrorMessage } from './message.js'; // Заменили импорт showAlert на showDataErrorMessage
+import { showDataErrorMessage } from './message.js';
 import { initFilter } from './filter.js';
 import './form.js';
 

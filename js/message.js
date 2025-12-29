@@ -4,6 +4,7 @@ const ALERT_SHOW_TIME = 5000;
 
 const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
 const errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
+// Теперь этот селектор сработает, так как мы добавили шаблон в HTML
 const dataErrorMessageTemplate = document.querySelector('#data-error')?.content.querySelector('.data-error');
 
 const body = document.querySelector('body');
@@ -51,10 +52,10 @@ function showMessage(template, closeButtonClass) {
   body.classList.add('modal-open');
 }
 
-const showSuccessMessage = () => showMessage(successMessageTemplate, '.success__button');
-const showErrorMessage = () => showMessage(errorMessageTemplate, '.error__button');
+export const showSuccessMessage = () => showMessage(successMessageTemplate, '.success__button');
+export const showErrorMessage = () => showMessage(errorMessageTemplate, '.error__button');
 
-const showDataErrorMessage = () => {
+export const showDataErrorMessage = () => {
   if (!dataErrorMessageTemplate) {
     return;
   }
@@ -66,7 +67,7 @@ const showDataErrorMessage = () => {
   }, ALERT_SHOW_TIME);
 };
 
-const showAlert = (message) => {
+export const showAlert = (message) => {
   const alertContainer = document.createElement('div');
   alertContainer.style.zIndex = '100';
   alertContainer.style.position = 'absolute';
@@ -78,14 +79,7 @@ const showAlert = (message) => {
   alertContainer.style.textAlign = 'center';
   alertContainer.style.backgroundColor = 'red';
   alertContainer.style.color = 'white';
-
   alertContainer.textContent = message;
-
   document.body.append(alertContainer);
-
-  setTimeout(() => {
-    alertContainer.remove();
-  }, ALERT_SHOW_TIME);
+  setTimeout(() => alertContainer.remove(), ALERT_SHOW_TIME);
 };
-
-export { showSuccessMessage, showErrorMessage, showAlert, showDataErrorMessage };
