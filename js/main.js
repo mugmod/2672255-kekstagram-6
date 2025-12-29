@@ -1,6 +1,6 @@
 import { renderThumbnails } from './thumbnail.js';
 import { getData } from './api.js';
-import { showDataErrorMessage } from './message.js';
+import { showAlert } from './message.js';
 import { initFilter } from './filter.js';
 import './form.js';
 
@@ -9,6 +9,6 @@ getData()
   renderThumbnails(photos);
   initFilter(photos);
 })
-  .catch(() => {
-  showDataErrorMessage();
+  .catch((err) => {
+  showAlert(err.message);
 });
