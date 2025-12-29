@@ -1,20 +1,14 @@
 import { renderThumbnails } from './thumbnail.js';
 import { getData } from './api.js';
-import { initFilter } from './filters.js';
-import { initEffects } from './effects.js';
-import { initValidation } from './validation.js';
-
-renderThumbnails();
-
-initEffects();
-
-initValidation();
+import { showAlert } from './message.js';
+import { initFilter } from './filter.js';
+import './form.js';
 
 getData()
   .then((photos) => {
-    renderThumbnails(photos);
-    initFilter(photos);
-  })
-  .catch(() => {
-    throw new Error('Не удалось загрузить фото');
-  });
+  renderThumbnails(photos);
+  initFilter(photos);
+})
+  .catch((err) => {
+  showAlert(err.message);
+});

@@ -1395,3 +1395,35 @@ main {
 .hidden {
   display: none;
 }
+
+.picture--active {
+  outline: 3px solid #fce26a;
+  border-radius: 4px;
+}
+
+.count-badge {
+  background: #ffd54f;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+
+.img-upload__field-wrapper--error .text__hashtags,
+.img-upload__field-wrapper--error .text__description {
+  border-color: #ff5638;
+  box-shadow: 0 0 0 2px rgba(255, 86, 56, 0.2);
+}
+
+.img-upload__field-wrapper--error::after {
+  content: attr(data-error);
+  display: block;
+  color: #ff5638;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.img-upload__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

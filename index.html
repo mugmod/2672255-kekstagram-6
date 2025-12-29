@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="vendor/nouislider/nouislider.css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="nouislider/nouislider.css">
+  <script src="js/pristine.min.js"></script>
+  <script src="nouislider/nouislider.js" defer></script>
+  <script src="js/functions.js" defer></script>
+  <script type="module" src="js/main.js" defer></script>
+
   <title>Кекстаграм</title>
 </head>
 
@@ -14,7 +19,7 @@
 <main>
 
   <!-- Фильтрация изображений от других пользователей -->
-  <section class="img-filters container">
+  <section class="img-filters  img-filters--inactive  container">
     <h2 class="img-filters__title  visually-hidden">Фильтр фотографий</h2>
     <form class="img-filters__form" action="index.html" method="get" autocomplete="off">
       <button type=button class="img-filters__button  img-filters__button--active" id="filter-default">По умолчанию</button>
@@ -31,11 +36,11 @@
     <section class="img-upload">
       <div class="img-upload__wrapper">
         <h2 class="img-upload__title  visually-hidden">Загрузка фотографии</h2>
-        <form class="img-upload__form" id="upload-select-image" autocomplete="off" method="post" enctype="multipart/form-data">
+        <form class="img-upload__form" id="upload-select-image" method="POST" action="https://29.javascript.htmlacademy.pro/kekstagram" enctype="multipart/form-data" autocomplete="off">
 
           <!-- Изначальное состояние поля для загрузки изображения -->
           <fieldset class="img-upload__start">
-            <input type="file" id="upload-file" class="img-upload__input  visually-hidden" name="filename" required>
+            <input type="file" id="upload-file" class="img-upload__input  visually-hidden" name="filename" accept="image/*" required>
             <label for="upload-file" class="img-upload__label  img-upload__control">Загрузить</label>
           </fieldset>
 
@@ -117,7 +122,7 @@
               <!-- Добавление хэш-тегов и комментария к изображению -->
               <fieldset class="img-upload__text text">
                 <div class="img-upload__field-wrapper">
-                  <input type="text" class="text__hashtags" name="hashtags" placeholder="#ХэшТег">
+                  <input class="text__hashtags" name="hashtags" placeholder="#ХэшТег">
                 </div>
                 <div class="img-upload__field-wrapper">
                   <textarea class="text__description" name="description" placeholder="Ваш комментарий..."></textarea>
@@ -213,7 +218,7 @@
   <section class="error">
     <div class="error__inner">
       <h2 class="error__title">Ошибка загрузки файла</h2>
-      <button type="button" class="error__button">Попробовать ещё раз</button>
+      <button type="button" class="error__button">Загрузить другой файл</button>
     </div>
   </section>
 </template>
@@ -227,8 +232,11 @@
     </div>
   </section>
 </template>
-<script src="./vendor/pristine/pristine.min.js"></script>
-<script src="./vendor/nouislider/nouislider.min.js"></script>
-<script type="module" src = "./js/main.js"></script>
+
+<!-- Экран загрузки изображения -->
+<template id="messages">
+  <div class="img-upload__message  img-upload__message--loading">Загружаем...</div>
+</template>
+
 </body>
 </html>

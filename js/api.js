@@ -1,32 +1,34 @@
-const API_URL = 'https://29.javascript.htmlacademy.pro/kekstagram';
+const BASE_URL = 'https://32.javascript.htmlacademy.pro/kekstagram';
 
-const getData = async () => {
-  try {
-    const response = await fetch(`${API_URL}/data`);
-    if (!response.ok) {
-      throw new Error('Ошибка при загрузке данных');
-    }
-    return await response.json();
-  } catch (error) {
-    throw new Error(`Не удалось загрузить данные: ${error.message}`);
-  }
-};
-const getPhotos = async () => {
-  const photos = await getData(API_URL);
-  return photos;
-};
-const sendData = async (data) => {
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      body: data,
-    });
-    if (!response.ok) {
-      throw new Error('Ошибка при отправке данных');
-    }
-  } catch (error) {
-    throw new Error(`Не удалось отправить данные: ${error.message}`);
-  }
+const Route = {
+  GET_DATA: '/data',
+  SEND_DATA: '/',
 };
 
-export { getData, sendData, getPhotos };
+const Method = {
+  GET: 'GET',
+  POST: 'POST',
+};
+
+const ErrorText = {
+  GET_DATA: 'Не удалось загрузить данные. Попробуйте обновить страницу',
+  SEND_DATA: 'Не удалось отправить форму. Попробуйте ещё раз',
+};
+
+const load = (route, errorText, method = Method.GET, body = null) =>
+fetch(`${BASE_URL}${route}`, { method, body })
+  .then((response) => {
+  if (!response.ok) {
+    throw new Error();
+  }
+  return response.json();
+})
+  .catch(() => {
+  throw new Error(errorText);
+});
+
+const getData = () => load(Route.GET_DATA, ErrorText.GET_DATA);
+
+const sendData = (body) => load(Route.SEND_DATA, ErrorText.SEND_DATA, Method.POST, body);
+
+export { getData, sendData };
